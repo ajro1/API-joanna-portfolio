@@ -123,88 +123,113 @@ Olá. Gostaria de te dizer que essa API possui CORS ativado para qualquer origem
       - `404` — Aluno não encontrado
       - `500` — Erro interno do servidor
 
-  ## Mensagens
+  ## Artista
 
-    ### GET /mensagens
+    ### GET /alunos
 
-    Lista todas as mensagens do mural
+    Lista todos os alunos
 
     - **Autenticação:** Não
     - **Body:** Nenhum
 
     - **Resposta de sucesso:** `200 OK`
 
-    ```json
-      [
-        {
-          "id": 2,
-          "texto": "Boa sorte!",
-
-          "autor": {
+      ```json
+        [
+          {
             "id": 1,
             "nome": "Alana",
-            "fotoUrl": null
+            "email": "ajro1@email.com",
+            "cidade": "Salinas",
+            "frase": "Abrace o mundo e você será abraçado.",
+            "planosFuturos": "Cursar Biologia",
+            "fotoUrl": null,
+            "role": "USER",
+            "criadoEm": "2026-04-03T10:30:00.000Z"
+          },
+          {
+            "id": 2,
+            "nome": "Amilton",
+            "email": "apj1@email.com",
+            "cidade": "Taiobeiras",
+            "frase": "Nunca desistir.",
+            "planosFuturos": "Cursar Matemática",
+            "fotoUrl": null,
+            "role": "USER",
+            "criadoEm": "2026-04-04T01:40:00.000Z"
           }
-        },
+        ]
+      ```
 
-        {  
-          "id": 3,
-          "texto": "Obrigado, você também!",
+    ### GET /alunos/:id
 
-          //o que entendi é que "include do Prisma" é a mesma coisa que essa seção "autor"
+    Busca um aluno pelo ID
 
-          "autor": {
-          "id": 2,
-          "nome": "Amilton",
-          "fotoUrl": null
-          }
-        }
-      ]
-    ```
+    - **Autenticação:** Não
+    - **Body:** Nenhum
 
-    ### POST /mensagens
+    - **Resposta de sucesso:** `200 OK`
 
-    Cria uma nova mensagem
+      ```json
 
-    - **Autenticação:** Sim (Bearer token)
+      {
+        "id": 1,
+        "nome": "Alana",
+        "email": "ajro1@email.com",
+        "cidade": "Salinas",
+        "frase": "Abrace o mundo e você será abraçado.",
+        "planosFuturos": "Cursar Biologia",
+        "fotoUrl": null,
+        "role": "USER",
+        "criadoEm": "2026-04-03T10:30:00.000Z"
+      }
+
+      ```
+
+    - **Erros:**
+      - `404` — Aluno não encontrado
+      - `500` — Erro interno do servidor
+
+    ### PUT /alunos/:id
+
+    Atualiza o próprio perfil
+
+    - **Autenticação:** Sim (Bearer Token)
+
     - **Body:**
 
     ```json
     {
-      "texto": "Boa sorte para todo mundo!"
+      "frase": "Abrace o mundo e você será pisoteado."
     }
     ```
 
-    - **Resposta de sucesso:** `201 Created`
+    - **Resposta de sucesso:** `200 OK`
 
     ```json
     {
       "id": 1,
-      "texto": "Boa sorte para todo mundo!",
-      "imagemUrl": null,
-      "autorId": 2,
-      "autor": {
-        "id": 2,
-        "nome": "Amilton",
-        "fotoUrl": null
-      },
-      "criadoEm": "2026-04-03T10:30:00.000Z"
+      "nome": "Alana",
+      "cidade": "Salinas",
+      "frase": "Abrace o mundo e você será pisoteado.",
+      "planosFuturos": "Cursar Química",
+      "fotoUrl": null
     }
     ```
 
     - **Erros:**
-      - `400` — O campo texto é obrigatório
+      - `404` — Aluno não encontrado
       - `500` — Erro interno do servidor
 
-    ### DELETE /mensagens/:id
+    ### DELETE /alunos/:id
 
-    Exclui uma mensagem
+    Remove um aluno   
 
-    - **Autenticação:** Sim (Bearer token)
+    - **Autenticação:** Sim (Bearer Token - Admin)
     - **Body:** Nenhum
 
     - **Resposta de Sucesso:** `204 No Content`
 
     - **Erros:**
-      - `404` — Mensagem não encontrada
+      - `404` — Aluno não encontrado
       - `500` — Erro interno do servidor

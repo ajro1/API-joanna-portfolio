@@ -5,7 +5,7 @@ import {
   criarAluno,
   atualizarAluno,
   deletarAluno,
-} from '../controllers/alunosController.js'; // importa as funções do controller
+} from '../controllers/artistaController.js'; // importa as funções do controller
 
 const router = Router(); // cria o router
 
