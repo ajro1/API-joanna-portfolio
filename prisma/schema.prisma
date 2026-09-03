@@ -1,47 +1,62 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-// Datasource — conexão com o banco PostgreSQL no Neon
 datasource db {
-  provider = "postgresql"           // tipo de banco
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-} 
+}
 
-// Generator — gera o Prisma Client em JavaScript
 generator client {
   provider = "prisma-client-js"
 }
 
-// Enum — valores fixos para o campo role
 enum Role {
-  USER    // aluno comum
-  ADMIN   // administrador (professor ou aluno com permissão especial)
+  ARTISTA
+  CLIENTE
 }
 
-// Model Aluno — representa a tabela "Aluno" no banco
-model Aluno {
-  id            Int        @id @default(autoincrement())   // PK, gerado automaticamente
-  nome          String                                     // obrigatório
-  email         String     @unique                         // obrigatório e único
-  senhaHash     String                                     // hash da senha (nunca retornado pela API)
-  cidade        String?                                    // opcional
-  frase         String?                                    // opcional
-  planosFuturos String?                                    // opcional
-  fotoUrl       String?                                    // opcional (URL do Uploadcare)
-  role          Role       @default(USER)                  // USER por padrão
-  criadoEm      DateTime   @default(now())                 // data de criação automática
-  mensagens     Mensagem[]                                 // relação 1:N — um aluno tem muitas mensagens
+model Artista {
+  id             Int          @id @default(autoincrement()) // gerado automaticamente
+  nome           String                                     // obrigatório
+  biografia      String                                     // obrigatório
+  fotoUrl        String                                     // obrigatório
+  email          String       @unique                       // obrigatório e único
+  numeroTelefone String?                                    // opcional, pode não ser informado
+  instagram      String?                                    // opcional, pode não possuir Instagram
+  senhaHash      String                                     // hash da senha (nunca retornado pela API)
+  role           Role         @default(ARTISTA)             // tipo da conta
+  criadoEm       DateTime     @default(now())               // data de criação automática
+  atualizadoEm   DateTime     @updatedAt                    // atualizado automaticamente
+
+  obras          ObraDeArte[]                               // relação 1:N = um artista possui várias obras
 }
 
-// Model Mensagem — representa a tabela "Mensagem" no banco
-model Mensagem {
-  id           Int        @id @default(autoincrement())
-  texto        String     
-  imagemUrl    String?
-  autorId      Int        
-  autor        Aluno      @relation(fields: [autorId], references: [id], onDelete: Cascade)
-  criadoEm     DateTime   @default(now())
+model Cliente {
+  id             Int          @id @default(autoincrement()) // chaive primária gerado automaticamente
+  nome           String                                     // obrigatório
+  fotoUrl        String?                                    // opcional, pode não possuir foto
+  email          String       @unique                       // obrigatório e único
+  numeroTelefone String?                                    // opcional, pode não ser informado
+  senhaHash      String                                     // hash da senha (nunca retornado pela API)
+  role           Role         @default(CLIENTE)             // tipo da conta
+  criadoEm       DateTime     @default(now())               // data de criação automática
+  atualizadoEm   DateTime     @updatedAt                    // atualizado automaticamente
+
+  obrasCompradas ObraDeArte[]                               // relação 1:N = um cliente pode comprar várias obras
+}
+
+model ObraDeArte {
+  id             Int          @id @default(autoincrement()) // chave primária código da obra
+  titulo         String                                     // obrigatório
+  preco          Float                                      // obrigatório
+  fotoUrl        String                                     // obrigatório
+  legenda        String?                                    // opcional, a obra pode não possuir legenda
+  dataDeCriacao  DateTime                                   // obrigatório
+  dimensoes      String                                     // obrigatório, ex.: "3x4", "5x9", "A4"
+
+  artistaId      Int                                       // foreign key do artista responsável
+  artista        Artista      @relation(fields: [artistaId], references: [id])
+
+  compradorId    Int?                                      // opcional, só é preenchido após a compra
+  comprador      Cliente?     @relation(fields: [compradorId], references: [id])
+
+  criadoEm       DateTime     @default(now())             // data de cadastro automática
+  atualizadoEm   DateTime     @updatedAt                  // atualização automática
 }
