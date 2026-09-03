@@ -4,7 +4,6 @@ import cors from 'cors';
 import logger from './middlewares/logger.js';      // importa o middleware de log
 import tratarErro from './middlewares/erro.js';     // importa o middleware de erro
 import alunosRouter from './routes/alunos.js'; // importa o router de alunos <- NOVO
-import mensagensRouter from './routes/mensagens.js'; // novo import
 
 const app = express();      // cria a aplicação Express
 const PORT = process.env.PORT || 3000;  // lê do .env, com fallback para 3000
@@ -15,7 +14,7 @@ app.use(logger);            // 3º — registra log
 
 // rota raiz — boas-vindas
 app.get('/', (req, res) => {
-  res.json({ mensagem: 'Yearbook API está no ar! 🎓' });
+  res.json({ mensagem: 'Portfólio da Joanna API está no ar!' });
 });
 
 // rota de health check

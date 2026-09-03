@@ -1,7 +1,7 @@
 {
-  "name": "yearbook-backend",
+  "name": "API-joanna-portfolio",
   "version": "1.0.0",
-  "description": "API REST do Yearbook Digital — IFNMG Salinas 2026",
+  "description": "API REST do Portfolio de Joanna",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

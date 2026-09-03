@@ -1,2 +1,2 @@
-# yearbook-backend
-API REST do Yearbook Digital — IFNMG Salinas 2026
+# API-joanna-portfolio
+API REST do Portfolio de Joanna
