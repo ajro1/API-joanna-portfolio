@@ -7,7 +7,24 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model ObraDeArte {
+model Artista {
+  id             Int          @id @default(autoincrement()) // gerado automaticamente
+  nome           String                                     // obrigatório
+  biografia      String                                     // obrigatório
+  senhaHash     String                                     // hash da senha (nunca retornado pela API)
+  fotoUrl        String                                     // obrigatório
+  email          String       @unique                       // obrigatório e único
+  numeroTelefone String?                                    // opcional, pode não ser informado
+  instagram      String?                                    // opcional, pode não possuir Instagram
+  senhaHash      String                                     // hash da senha (nunca retornado pela API)
+  
+  criadoEm       DateTime     @default(now())               // data de criação automática
+  atualizadoEm   DateTime     @updatedAt                    // atualizado automaticamente
+
+  obras          Obra[]                               // relação 1:N = um artista possui várias obras
+}
+
+model Obra {
   id             Int          @id @default(autoincrement()) // chave primária código da obra
   titulo         String                                     // obrigatório
   preco          Float                                      // obrigatório
@@ -15,12 +32,6 @@ model ObraDeArte {
   legenda        String?                                    // opcional, a obra pode não possuir legenda
   dataDeCriacao  DateTime                                   // obrigatório
   dimensoes      String                                     // obrigatório, ex.: "3x4", "5x9", "A4"
-
-  artistaId      Int                                       // foreign key do artista responsável
-  artista        Artista      @relation(fields: [artistaId], references: [id])
-
-  compradorId    Int?                                      // opcional, só é preenchido após a compra
-  comprador      Cliente?     @relation(fields: [compradorId], references: [id])
 
   criadoEm       DateTime     @default(now())             // data de cadastro automática
   atualizadoEm   DateTime     @updatedAt                  // atualização automática
