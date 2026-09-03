@@ -7,41 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Role {
-  ARTISTA
-  CLIENTE
-}
-
-model Artista {
-  id             Int          @id @default(autoincrement()) // gerado automaticamente
-  nome           String                                     // obrigatório
-  biografia      String                                     // obrigatório
-  fotoUrl        String                                     // obrigatório
-  email          String       @unique                       // obrigatório e único
-  numeroTelefone String?                                    // opcional, pode não ser informado
-  instagram      String?                                    // opcional, pode não possuir Instagram
-  senhaHash      String                                     // hash da senha (nunca retornado pela API)
-  role           Role         @default(ARTISTA)             // tipo da conta
-  criadoEm       DateTime     @default(now())               // data de criação automática
-  atualizadoEm   DateTime     @updatedAt                    // atualizado automaticamente
-
-  obras          ObraDeArte[]                               // relação 1:N = um artista possui várias obras
-}
-
-model Cliente {
-  id             Int          @id @default(autoincrement()) // chaive primária gerado automaticamente
-  nome           String                                     // obrigatório
-  fotoUrl        String?                                    // opcional, pode não possuir foto
-  email          String       @unique                       // obrigatório e único
-  numeroTelefone String?                                    // opcional, pode não ser informado
-  senhaHash      String                                     // hash da senha (nunca retornado pela API)
-  role           Role         @default(CLIENTE)             // tipo da conta
-  criadoEm       DateTime     @default(now())               // data de criação automática
-  atualizadoEm   DateTime     @updatedAt                    // atualizado automaticamente
-
-  obrasCompradas ObraDeArte[]                               // relação 1:N = um cliente pode comprar várias obras
-}
-
 model ObraDeArte {
   id             Int          @id @default(autoincrement()) // chave primária código da obra
   titulo         String                                     // obrigatório
