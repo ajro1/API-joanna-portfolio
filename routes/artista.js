@@ -1,18 +1,18 @@
 import { Router } from 'express'; // Router cria um mini-app de rotas
 import {
-  listarAlunos,
-  buscarAluno,
-  criarAluno,
-  atualizarAluno,
-  deletarAluno,
-} from '../controllers/artistaController.js'; // importa as funções do controller
+  listarArtistas,
+  buscarArtista,
+  criarArtista,
+  atualizarArtista,
+  deletarArtista,
+} from '../controllers/artistaController.js'; // importa as funções certas do controlador
 
-const router = Router(); // cria o router
+const router = Router(); // cria o router de artistas
 
-router.get('/', listarAlunos);         // GET /alunos
-router.get('/:id', buscarAluno);       // GET /alunos/:id
-router.post('/', criarAluno);          // POST /alunos
-router.put('/:id', atualizarAluno);    // PUT /alunos/:id
-router.delete('/:id', deletarAluno);   // DELETE /alunos/:id
+router.get('/', listarArtistas);         // GET /artistas
+router.get('/:id', buscarArtista);       // GET /artistas/:id
+router.post('/', criarArtista);          // POST /artistas
+router.put('/:id', atualizarArtista);    // PUT /artistas/:id
+router.delete('/:id', deletarArtista);   // DELETE /artistas/:id
 
 export default router; // exporta o router para usar no index.js

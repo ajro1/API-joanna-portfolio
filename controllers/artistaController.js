@@ -1,109 +1,107 @@
 import prisma from '../prisma/client.js'; // importa o singleton do Prisma
 
-// select que omite senhaHash — reutilizado em todas as queries de alunos
+// Filtro select que omite o campo senhaHash nas respostas públicas da API
 const selectSemSenha = {
   id: true,
   nome: true,
   email: true,
-  cidade: true,
-  frase: true,
-  planosFuturos: true,
+  biografia: true,
   fotoUrl: true,
+  numeroTelefone: true,
+  instagram: true,
   role: true,
   criadoEm: true,
-  // senhaHash NÃO está aqui — nunca retornado pela API
+  atualizadoEm: true,
 };
 
-// GET /alunos — lista todos os alunos
-export async function listarAlunos(req, res, next) {  // adicione next aos parâmetros
+// GET /artistas — lista todos os artistas cadastrados
+export async function listarArtistas(req, res, next) {
   try {
-    const alunos = await prisma.aluno.findMany({
-    select: selectSemSenha,
+    const artistas = await prisma.artista.findMany({
+      select: selectSemSenha,
     });
-
-    res.json(alunos);
-
+    res.json(artistas);
   } catch (erro) {
-    next(erro);  // passa o erro para o middleware global
-  }
-}
-
-// GET /alunos/id — busca um aluno pelo ID
-
-export async function buscarAluno(req, res, next) {
-try {
-  const { id } = req.params; // extrai o \:id da URL
-
-  const aluno = await prisma.aluno.findUnique({
-    where: { id: Number(id) }, // converte string → number
-    select: selectSemSenha,    // omite senhaHash
-  });
-
-  if (!aluno) {
-    return res.status(404).json({ erro: 'Aluno não encontrado' }); // null → 404
-  }
-
-  res.json(aluno); // retorna o aluno encontrado
-
-} catch(erro) {
     next(erro);
   }
-
 }
 
-// --- Stubs para o desafio do aluno ---
-
-export async function criarAluno(req, res, next) {
+// GET /artistas/:id — busca um artista específico pelo ID
+export async function buscarArtista(req, res, next) {
   try {
-    const { nome, email, senhaHash, cidade, frase, planosFuturos } = req.body;
+    const { id } = req.params;
+    const artista = await prisma.artista.findUnique({
+      where: { id: Number(id) },
+      select: selectSemSenha,
+    });
 
-    const aluno = await prisma.aluno.create({
+    if (!artista) {
+      return res.status(404).json({ erro: 'Artista não encontrado' });
+    }
+
+    res.json(artista);
+  } catch (erro) {
+    next(erro);
+  }
+}
+
+// POST /artistas — cadastra um novo artista
+export async function criarArtista(req, res, next) {
+  try {
+    const { nome, email, senhaHash, biografia, fotoUrl, numeroTelefone, instagram } = req.body;
+
+    // Verifica se o email já está cadastrado
+    const emailExistente = await prisma.artista.findUnique({ where: { email } });
+    if (emailExistente) {
+      return res.status(400).json({ erro: 'Este e-mail já está em uso.' });
+    }
+
+    const artista = await prisma.artista.create({
       data: {
         nome,
         email,
-        senhaHash,
-        cidade,
-        frase,
-        planosFuturos,
+        senhaHash, // Idealmente criptografada no fluxo do auth middleware futuramente
+        biografia,
+        fotoUrl,
+        numeroTelefone,
+        instagram,
+        role: 'USER', // Padrão inicial
       },
       select: selectSemSenha,
     });
 
-    return res.status(201).json(aluno);
-
+    return res.status(201).json(artista);
   } catch (erro) {
-      next(erro);
-    }
+    next(erro);
+  }
 }
 
-export async function atualizarAluno(req, res, next) {
-  const { id } = req.params;
-
+// PUT /artistas/:id — atualiza os dados de um artista
+export async function atualizarArtista(req, res, next) {
   try {
-    const aluno = await prisma.aluno.update({
+    const { id } = req.params;
+    const artista = await prisma.artista.update({
       where: { id: Number(id) },
       data: req.body,
       select: selectSemSenha,
     });
 
-    return res.status(200).json(aluno);
-
+    return res.status(200).json(artista);
   } catch (erro) {
-    return res.status(404).json({ erro: "Aluno não encontrado" });
+    return res.status(404).json({ erro: 'Artista não encontrado' });
   }
 }
 
-export async function deletarAluno(req, res, next) {
-  const { id } = req.params;
-
+// DELETE /artistas/:id — remove um artista do sistema
+export async function deletarArtista(req, res, next) {
   try {
-    await prisma.aluno.delete({
+    const { id } = req.params;
+    await prisma.artista.delete({
       where: { id: Number(id) },
     });
 
     return res.status(204).end();
-
   } catch (erro) {
-    return res.status(404).json({ erro: "Aluno não encontrado" });
+    return res.status(404).json({ erro: 'Artista não encontrado' });
   }
 }

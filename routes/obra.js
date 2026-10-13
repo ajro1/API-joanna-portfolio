@@ -1,18 +1,18 @@
 import { Router } from 'express'; // Router cria um mini-app de rotas
 import {
-  listarAlunos,
-  buscarAluno,
-  criarAluno,
-  atualizarAluno,
-  deletarAluno,
-} from '../controllers/obraController.js'; // importa as funções do controller
+  listarObras,
+  buscarObra,
+  criarObra,
+  atualizarObra,
+  deletarObra,
+} from '../controllers/obraController.js'; // importa as funções certas do controlador de obras
 
-const router = Router(); // cria o router
+const router = Router(); // cria o router de obras
 
-router.get('/', listarAlunos);         // GET /alunos
-router.get('/:id', buscarAluno);       // GET /alunos/:id
-router.post('/', criarAluno);          // POST /alunos
-router.put('/:id', atualizarAluno);    // PUT /alunos/:id
-router.delete('/:id', deletarAluno);   // DELETE /alunos/:id
+router.get('/', listarObras);         // GET /obras
+router.get('/:id', buscarObra);       // GET /obras/:id
+router.post('/', criarObra);          // POST /obras
+router.put('/:id', atualizarObra);    // PUT /obras/:id
+router.delete('/:id', deletarObra);   // DELETE /obras/:id
 
 export default router; // exporta o router para usar no index.js

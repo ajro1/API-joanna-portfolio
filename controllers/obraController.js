@@ -1,109 +1,113 @@
 import prisma from '../prisma/client.js'; // importa o singleton do Prisma
 
-// select que omite senhaHash — reutilizado em todas as queries de alunos
-const selectSemSenha = {
-  id: true,
-  nome: true,
-  email: true,
-  cidade: true,
-  frase: true,
-  planosFuturos: true,
-  fotoUrl: true,
-  role: true,
-  criadoEm: true,
-  // senhaHash NÃO está aqui — nunca retornado pela API
-};
-
-// GET /alunos — lista todos os alunos
-export async function listarAlunos(req, res, next) {  // adicione next aos parâmetros
+// GET /obras — lista todas as obras com os dados resumidos do artista criador
+export async function listarObras(req, res, next) {
   try {
-    const alunos = await prisma.aluno.findMany({
-    select: selectSemSenha,
+    const obras = await prisma.obra.findMany({
+      include: {
+        artista: {
+          select: {
+            id: true,
+            nome: true,
+            email: true,
+          },
+        },
+      },
     });
-
-    res.json(alunos);
-
+    res.json(obras);
   } catch (erro) {
-    next(erro);  // passa o erro para o middleware global
-  }
-}
-
-// GET /alunos/id — busca um aluno pelo ID
-
-export async function buscarAluno(req, res, next) {
-try {
-  const { id } = req.params; // extrai o \:id da URL
-
-  const aluno = await prisma.aluno.findUnique({
-    where: { id: Number(id) }, // converte string → number
-    select: selectSemSenha,    // omite senhaHash
-  });
-
-  if (!aluno) {
-    return res.status(404).json({ erro: 'Aluno não encontrado' }); // null → 404
-  }
-
-  res.json(aluno); // retorna o aluno encontrado
-
-} catch(erro) {
     next(erro);
   }
-
 }
 
-// --- Stubs para o desafio do aluno ---
-
-export async function criarAluno(req, res, next) {
+// GET /obras/:id — busca uma obra específica pelo ID
+export async function buscarObra(req, res, next) {
   try {
-    const { nome, email, senhaHash, cidade, frase, planosFuturos } = req.body;
-
-    const aluno = await prisma.aluno.create({
-      data: {
-        nome,
-        email,
-        senhaHash,
-        cidade,
-        frase,
-        planosFuturos,
-      },
-      select: selectSemSenha,
-    });
-
-    return res.status(201).json(aluno);
-
-  } catch (erro) {
-      next(erro);
-    }
-}
-
-export async function atualizarAluno(req, res, next) {
-  const { id } = req.params;
-
-  try {
-    const aluno = await prisma.aluno.update({
+    const { id } = req.params;
+    const obra = await prisma.obra.findUnique({
       where: { id: Number(id) },
-      data: req.body,
-      select: selectSemSenha,
+      include: {
+        artista: {
+          select: {
+            id: true,
+            nome: true,
+            instagram: true,
+          },
+        },
+      },
     });
 
-    return res.status(200).json(aluno);
+    if (!obra) {
+      return res.status(404).json({ erro: 'Obra não encontrada.' });
+    }
 
+    res.json(obra);
   } catch (erro) {
-    return res.status(404).json({ erro: "Aluno não encontrado" });
+    next(erro);
   }
 }
 
-export async function deletarAluno(req, res, next) {
-  const { id } = req.params;
-
+// POST /obras — cadastra uma nova obra vinculada a um artista
+export async function criarObra(req, res, next) {
   try {
-    await prisma.aluno.delete({
+    const { titulo, preco, fotoUrl, legenda, dataDeCriacao, dimensoes, artistaId } = req.body;
+
+    // Validação: confere se o artista informado realmente existe no banco
+    const artistaExiste = await prisma.artista.findUnique({ where: { id: Number(artistaId) } });
+    if (!artistaExiste) {
+      return res.status(404).json({ erro: 'O artista informado para esta obra não existe.' });
+    }
+
+    const obra = await prisma.obra.create({
+      data: {
+        titulo,
+        preco: Number(preco),
+        fotoUrl,
+        legenda,
+        dataDeCriacao: new Date(dataDeCriacao), // Converte string de data em objeto Date
+        dimensoes,
+        artistaId: Number(artistaId),
+      },
+    });
+
+    return res.status(201).json(obra);
+  } catch (erro) {
+    next(erro);
+  }
+}
+
+// PUT /obras/:id — atualiza os dados de uma obra de arte
+export async function atualizarObra(req, res, next) {
+  try {
+    const { id } = req.params;
+    const dadosAtualizacao = { ...req.body };
+
+    // Garante as conversões corretas de tipo se os valores correspondentes forem enviados
+    if (dadosAtualizacao.preco) dadosAtualizacao.preco = Number(dadosAtualizacao.preco);
+    if (dadosAtualizacao.artistaId) dadosAtualizacao.artistaId = Number(dadosAtualizacao.artistaId);
+    if (dadosAtualizacao.dataDeCriacao) dadosAtualizacao.dataDeCriacao = new Date(dadosAtualizacao.dataDeCriacao);
+
+    const obra = await prisma.obra.update({
+      where: { id: Number(id) },
+      data: dadosAtualizacao,
+    });
+
+    return res.status(200).json(obra);
+  } catch (erro) {
+    return res.status(404).json({ erro: 'Obra não encontrada.' });
+  }
+}
+
+// DELETE /obras/:id — remove uma obra de arte do sistema
+export async function deletarObra(req, res, next) {
+  try {
+    const { id } = req.params;
+    await prisma.obra.delete({
       where: { id: Number(id) },
     });
 
     return res.status(204).end();
-
   } catch (erro) {
-    return res.status(404).json({ erro: "Aluno não encontrado" });
+    return res.status(404).json({ erro: 'Obra não encontrada.' });
   }
 }

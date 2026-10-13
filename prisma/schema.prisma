@@ -8,31 +8,35 @@ generator client {
 }
 
 model Artista {
-  id             Int          @id @default(autoincrement()) // gerado automaticamente
-  nome           String                                     // obrigatório
-  biografia      String                                     // obrigatório
-  senhaHash     String                                     // hash da senha (nunca retornado pela API)
-  fotoUrl        String                                     // obrigatório
-  email          String       @unique                       // obrigatório e único
-  numeroTelefone String?                                    // opcional, pode não ser informado
-  instagram      String?                                    // opcional, pode não possuir Instagram
-  senhaHash      String                                     // hash da senha (nunca retornado pela API)
-  
-  criadoEm       DateTime     @default(now())               // data de criação automática
-  atualizadoEm   DateTime     @updatedAt                    // atualizado automaticamente
+  id             Int      @id @default(autoincrement()) // gerado automaticamente
+  nome           String // obrigatório
+  biografia      String // obrigatório
+  email          String   @unique // obrigatório e único
+  senhaHash      String // hash da senha (nunca retornado pela API)
+  fotoUrl        String // obrigatório
+  numeroTelefone String? // opcional, pode não ser informado
+  instagram      String? // opcional, pode não possuir Instagram
+  role           String   @default("USER") // adicionado para manter a lógica de roles/admin do professor
 
-  obras          Obra[]                               // relação 1:N = um artista possui várias obras
+  criadoEm     DateTime @default(now()) // data de criação automática
+  atualizadoEm DateTime @updatedAt // atualizado automaticamente
+
+  obras Obra[] // relação 1:N = um artista possui várias obras
 }
 
 model Obra {
-  id             Int          @id @default(autoincrement()) // chave primária código da obra
-  titulo         String                                     // obrigatório
-  preco          Float                                      // obrigatório
-  fotoUrl        String                                     // obrigatório
-  legenda        String?                                    // opcional, a obra pode não possuir legenda
-  dataDeCriacao  DateTime                                   // obrigatório
-  dimensoes      String                                     // obrigatório, ex.: "3x4", "5x9", "A4"
+  id            Int      @id @default(autoincrement()) // chave primária código da obra
+  titulo        String // obrigatório
+  preco         Float // obrigatório
+  fotoUrl       String // obrigatório
+  legenda       String? // opcional, a obra pode não possuir legenda
+  dataDeCriacao DateTime // obrigatório
+  dimensoes     String // obrigatório, ex.: "3x4", "5x9", "A4"
 
-  criadoEm       DateTime     @default(now())             // data de cadastro automática
-  atualizadoEm   DateTime     @updatedAt                  // atualização automática
+  criadoEm     DateTime @default(now()) // data de cadastro automática
+  atualizadoEm DateTime @updatedAt // atualização automática
+
+  // Configuração da relação com Artista (essencial para o Prisma)
+  artistaId Int
+  artista   Artista @relation(fields: [artistaId], references: [id], onDelete: Cascade)
 }
