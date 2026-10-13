@@ -50,7 +50,12 @@ export async function buscarObra(req, res, next) {
 // POST /obras — cadastra uma nova obra vinculada a um artista
 export async function criarObra(req, res, next) {
   try {
-    const { titulo, preco, fotoUrl, legenda, dataDeCriacao, dimensoes, artistaId } = req.body;
+    const { titulo, preco, fotoUrl, dataDeCriacao, dimensoes, artistaId } = req.body;
+
+    // SE QUALQUER CAMPO OBRIGATÓRIO ESTIVER FALTANDO, RETORNA 400 (Isso vai fazer o Bruno passar!)
+    if (!titulo || !preco || !fotoUrl || !dataDeCriacao || !dimensoes || !artistaId) {
+      return res.status(400).json({ erro: 'Campos obrigatórios ausentes.' });
+    }
 
     // Validação: confere se o artista informado realmente existe no banco
     const artistaExiste = await prisma.artista.findUnique({ where: { id: Number(artistaId) } });
@@ -63,8 +68,8 @@ export async function criarObra(req, res, next) {
         titulo,
         preco: Number(preco),
         fotoUrl,
-        legenda,
-        dataDeCriacao: new Date(dataDeCriacao), // Converte string de data em objeto Date
+        legenda: req.body.legenda, // opcional
+        dataDeCriacao: new Date(dataDeCriacao), 
         dimensoes,
         artistaId: Number(artistaId),
       },
