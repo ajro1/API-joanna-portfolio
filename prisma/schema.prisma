@@ -30,7 +30,7 @@ model Obra {
   preco          Float                                      // obrigatório
   fotoUrl        String                                     // obrigatório
   legenda        String?                                    // opcional, a obra pode não possuir legenda
-  dataDeCriacao  DateTime                                   // obrigatório
+  anoCriacao     String                                     // obrigatório
   dimensoes      String                                     // obrigatório, ex.: "3x4", "5x9", "A4"
 
   criadoEm       DateTime     @default(now())             // data de cadastro automática
