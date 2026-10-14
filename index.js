@@ -25,8 +25,8 @@ app.get('/status', (req, res) => {
 });
 
 // registra as rotas de alunos com prefixo /alunos  <- NOVO
-app.use('/alunos', alunosRouter);
-app.use('/mensagens', mensagensRouter); // registra rotas de mensagens
+//app.use('/alunos', alunosRouter);
+//app.use('/mensagens', mensagensRouter); // registra rotas de mensagens
 
 // Middleware de erro — SEMPRE por último, depois das rotas
 app.use(tratarErro);
