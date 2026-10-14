@@ -14,9 +14,9 @@ Olá. Gostaria de te dizer que essa API possui CORS ativado para qualquer origem
 
   ## Obra
 
-    ### GET /alunos
+    ### GET /obra
 
-    Lista todos os alunos
+    Lista todas as obras
 
     - **Autenticação:** Não
     - **Body:** Nenhum
@@ -27,25 +27,23 @@ Olá. Gostaria de te dizer que essa API possui CORS ativado para qualquer origem
         [
           {
             "id": 1,
-            "nome": "Alana",
-            "email": "ajro1@email.com",
-            "cidade": "Salinas",
-            "frase": "Abrace o mundo e você será abraçado.",
-            "planosFuturos": "Cursar Biologia",
-            "fotoUrl": null,
-            "role": "USER",
-            "criadoEm": "2026-04-03T10:30:00.000Z"
+            "titulo": "Água Azul",
+            "preco": 54.99,
+            "fotoUrl": "https://picsum.photos",
+            "legenda": null,
+            "dimensoes": "A4",
+            "anoCriacao": "2024",
+            "criadoEm": "2026-10-14T10:30:00.000Z"
           },
           {
             "id": 2,
-            "nome": "Amilton",
-            "email": "apj1@email.com",
-            "cidade": "Taiobeiras",
-            "frase": "Nunca desistir.",
-            "planosFuturos": "Cursar Matemática",
-            "fotoUrl": null,
-            "role": "USER",
-            "criadoEm": "2026-04-04T01:40:00.000Z"
+            "titulo": "Grama Verde",
+            "preco": 34.99,
+            "fotoUrl": "https://picsum.photos",
+            "legenda": null,
+            "dimensoes": "A4",
+            "anoCriacao": "2025",
+            "criadoEm": "2026-10-14T10:30:00.000Z"
           }
         ]
       ```
